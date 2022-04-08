@@ -1,0 +1,64 @@
+<html lang="ko">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <script type="text/javascript" src="./wad-interface.js"></script>
+</head>
+<script type="text/javascript">
+
+   /**
+    * 콜백이 필요 없이 작성하는 코드 샘플
+    */
+   function pop() {
+       window.wadInterface.toNative('pop');
+   }
+
+   /**
+    * 콜백 방식을 이용해서 작성한 코드 샘플
+    */
+   function versionCallback() {
+       window.wadInterface.toNative('appVersion', null, (res) => {
+           alert(`앱 버전은 ${res.version} 입니다.`);
+       });
+   }
+
+   /**
+    * await async 를 이용해서 작성한 코드 샘플
+    * @returns {Promise<void>}
+    */
+   async function appVersion() {
+       const res = await window.wadInterface.toNativePromise('appVersion');
+
+       if (res.version === '1.0.0') {
+           alert(`앱 버전은 ${res.version} 입니다.`);
+       }
+   }
+   let appStateChangeEvents = [];
+
+   function allEventRemove() {
+       appStateChangeEvents.forEach(event => {
+           event.remove();
+       });
+   }
+
+   document.addEventListener("DOMContentLoaded", function(){
+       const eventA = window.wadInterface.addListener('appStateChange', (data) => {
+           console.log(data);
+       });
+
+       const eventB = window.wadInterface.addListener('appStateChange', (data) => {
+           console.log('하하하하');
+       });
+
+       appStateChangeEvents.push(eventA, eventB);
+   });
+
+</script>
+<body>
+    <h1> <a href="javascript:versionCallback()"> versionCallback</a> </h1> <br /><br />
+    <h1> <a href="javascript:appVersion()"> app version</a> </h1> <br /><br />
+    <h1> <a href="javascript:pop()">pop</a></h1> <br/><br/>
+    <h1> <a href="javascript:allEventRemove()">appStateChange event 제거</a></h1> <br/><br/>
+<h1> This is a sample file created to test a simple "WebView".<br /></h1>
+<h1> Modify this file to test the "WebView" content.<br /></h1>
+</body>
+</html>
