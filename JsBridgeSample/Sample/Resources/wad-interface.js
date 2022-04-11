@@ -24,7 +24,7 @@
     callbacks: {},
     /**
      * @private
-     * 이벤트를
+     * 이벤트 리스너를 보관
      */
     listeners: {},
     /**
