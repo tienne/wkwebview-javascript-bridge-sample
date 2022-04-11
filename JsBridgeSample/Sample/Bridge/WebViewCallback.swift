@@ -10,18 +10,14 @@ class WebViewCallback: NSObject {
 
   let isSuccessful: Bool
   let args: JSON
-  let keepCallback: Bool
-
-  init(args: JSON = [], isSuccessful: Bool, keepCallback: Bool = false) {
+    init(args: JSON = [:], isSuccessful: Bool) {
     self.args = args
     self.isSuccessful = isSuccessful
-    self.keepCallback = keepCallback
   }
 
   @objc
-  init(argsDictionary: [String: String], isSuccessful: Bool, keepCallback: Bool) {
+  init(argsDictionary: [String: String], isSuccessful: Bool) {
     self.args = JSON(argsDictionary)
     self.isSuccessful = isSuccessful
-    self.keepCallback = keepCallback
   }
 }

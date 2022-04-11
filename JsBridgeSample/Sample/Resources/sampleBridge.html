@@ -8,8 +8,9 @@
    /**
     * 콜백이 필요 없이 작성하는 코드 샘플
     */
-   function pop() {
-       window.wadInterface.toNative('pop');
+   async function pop() {
+       const res = await window.wadInterface.toNativePromise('pop');
+       console.log(res);
    }
 
    /**
@@ -46,7 +47,7 @@
        });
 
        const eventB = window.wadInterface.addListener('appStateChange', (data) => {
-           console.log('하하하하');
+           console.log('이 이벤트도 같이 실행되요.');
        });
 
        appStateChangeEvents.push(eventA, eventB);

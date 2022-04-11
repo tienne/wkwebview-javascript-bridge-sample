@@ -27,10 +27,11 @@
      * 이벤트 리스너를 보관
      */
     listeners: {},
+
     /**
      * 네이티브에서 이벤트가 발생시 호출할 함수
-     * @param { string } eventName
-     * @param { Object? } args
+     * @param { string } eventName 이벤트명
+     * @param { Object? } args 이벤트에 넘겨줄 파라미터
      */
     fromNativeEvent: function (eventName, args) {
       var listeners = this.listeners[eventName];
@@ -89,15 +90,12 @@
     },
 
     /**
-     *
      * 네이티브에서 커맨드를 실행한 후, 네이티브 코드가 호출한다.
-     * 인자에 따라서 콜백을 가져온다.
      * @param {number} callbackID - 실행할 때 네이티브에 전송했던 콜백 아이디
      * @param {boolean} isSuccess - 커맨드가 성공적으로 실행되었는지 여부
      * @param {Object} args - 네이티브에서 전송하는 JSON 객체
-     * @param {boolean} keepCallback - 콜백을 실행할 필요가 있는지 여부
      */
-    fromNative: function(callbackID, isSuccess, args, keepCallback) {
+    fromNative: function(callbackID, isSuccess, args) {
       var callback = window.wadInterface.callbacks[callbackID];
       if (callback) {
         if (isSuccess) {
@@ -109,9 +107,8 @@
             callback.fail.apply(null, [args]);
           }
         }
-        if (!keepCallback) {
-          delete window.wadInterface.callbacks[callbackID];
-        }
+
+        delete window.wadInterface.callbacks[callbackID];
       }
     },
     /**
