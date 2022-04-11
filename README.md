@@ -138,6 +138,55 @@ var wadInterface = {
 }
 ```
 
+샘플 코드에서는 두가지 케이스를 작성했습니다.
+
+- 앱의 버전정보를 요청하는경우
+- 현재 떠있는 웹뷰를 종료해달라는 요청
+
+```swift
+// Sample/Bridge/WebViewMessageProcessor.swift
+
+class WebViewMessageProcessor: NSObject {
+    //...
+
+    func postMessage(message: WebViewMessage) {
+        let completion: (WebViewCallback) -> Void = { callback in
+          self.executeCallback(callbackID: message.callbackID, callback: callback)
+        }
+        guard let action = message.webviewAction else {
+          return
+        }
+
+        self.execute(action: action, completion: completion)
+    }
+    
+    private func execute(action: WebViewAction, completion: ((WebViewCallback) -> Void)? = nil) {
+        switch action {
+        case .appVersion:
+            self.appVersion(completion: completion)
+        case .navigationPop:
+            self.popView(completion: completion)
+        }
+    }
+
+    private func popView(completion: ((WebViewCallback) -> Void)? = nil) {
+        self.target.popView()
+        completion?(WebViewCallback(isSuccessful: true))
+    }
+
+    private func appVersion(completion: ((WebViewCallback) -> Void)? = nil) {
+        var callback: WebViewCallback {
+            var args = JSON()
+            args["version"].string = "1.0.0";
+            return .init(args: args, isSuccessful: true)
+        }
+
+        completion?(callback)
+    }
+    //...
+}
+```
+
 ## 네이티브 -> 웹뷰
 
 반대로 네이티브에서 시작해야하는 케이스가 있습니다.
@@ -183,6 +232,8 @@ var wadInterface = {
 샘플 코드에서는 앱의 상태가 변경되었을때 (백그라운드, 활성화) 시 appStateChange 라는 이벤트를 호출하도록 작성하였습니다.
 
 ```swift
+// Sample/Bridge/WebViewMessageProcessor.swift
+ 
 class WebViewMessageProcessor: NSObject {
     func load() {
         // 앱이 다시 활성화 되었을때
