@@ -111,10 +111,10 @@ import SwiftyJSON
 
 class WebViewMessageProcessor: NSObject {
     // MARK: - 웹뷰 -> 네이티브 -> 웹뷰 처리하는 콜백 실행
-    func executeCallback(callbackID: String?, callback: WebViewCallback) {
-      guard let callbackID = callbackID else { return }
+    func executeCallback(callbackId: String?, callback: WebViewCallback) {
+      guard let callbackId = callbackId else { return }
       let argsString = callback.args.rawString(options: []) ?? ""
-      let callbackFunction = "wadInterface.fromNative(\(callbackID), \(callback.isSuccessful), \(argsString));"
+      let callbackFunction = "wadInterface.fromNative(\(callbackId), \(callback.isSuccessful), \(argsString));"
 
       self.target.executeJavaScript(javascriptString: callbackFunction)
     }
@@ -129,11 +129,11 @@ var wadInterface = {
 
   /**
    * 네이티브에서 커맨드를 실행한 후, 네이티브 코드가 호출한다.
-   * @param {number} callbackID - 실행할 때 네이티브에 전송했던 콜백 아이디
+   * @param {number} callbackId - 실행할 때 네이티브에 전송했던 콜백 아이디
    * @param {boolean} isSuccess - 커맨드가 성공적으로 실행되었는지 여부
    * @param {Object} args - 네이티브에서 전송하는 JSON 객체
    */
-  fromNative: function(callbackID, isSuccess, args) {}
+  fromNative: function(callbackId, isSuccess, args) {}
   //...
 }
 ```
@@ -151,7 +151,7 @@ class WebViewMessageProcessor: NSObject {
 
     func postMessage(message: WebViewMessage) {
         let completion: (WebViewCallback) -> Void = { callback in
-          self.executeCallback(callbackID: message.callbackID, callback: callback)
+          self.executeCallback(callbackId: message.callbackId, callback: callback)
         }
         guard let action = message.webviewAction else {
           return

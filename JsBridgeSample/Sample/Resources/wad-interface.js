@@ -16,7 +16,7 @@
      * 네이티브로 실행할 함수의 콜백 아이디
      * 고유한 아이디를 가지고, 새로고침해도 겹치지 않도록 random 값을 준다.
      */
-    callbackID: Math.floor(Math.random() * 2000000000),
+    callbackId: Math.floor(Math.random() * 2000000000),
     /**
      * @private
      * 실행한 함수가 콜백을 실행하기 전까지, 콜백을 저장한다.
@@ -91,12 +91,12 @@
 
     /**
      * 네이티브에서 커맨드를 실행한 후, 네이티브 코드가 호출한다.
-     * @param {number} callbackID - 실행할 때 네이티브에 전송했던 콜백 아이디
+     * @param {number} callbackId - 실행할 때 네이티브에 전송했던 콜백 아이디
      * @param {boolean} isSuccess - 커맨드가 성공적으로 실행되었는지 여부
      * @param {Object} args - 네이티브에서 전송하는 JSON 객체
      */
-    fromNative: function(callbackID, isSuccess, args) {
-      var callback = window.wadInterface.callbacks[callbackID];
+    fromNative: function(callbackId, isSuccess, args) {
+      var callback = window.wadInterface.callbacks[callbackId];
       if (callback) {
         if (isSuccess) {
           if (callback.success) {
@@ -108,7 +108,7 @@
           }
         }
 
-        delete window.wadInterface.callbacks[callbackID];
+        delete window.wadInterface.callbacks[callbackId];
       }
     },
     /**
@@ -120,19 +120,19 @@
      * @param {Function?} [failCallback] -  액션이 실패했을 때 불리는 함수 객체
      */
     toNative: function(action, actionArgs, successCallback, failCallback) {
-      var callbackID = null;
+      var callbackId = null;
 
       if (successCallback || failCallback) {
-        callbackID = window.wadInterface.callbackID;
-        window.wadInterface.callbackID += 1;
-        window.wadInterface.callbacks[callbackID] = { success: successCallback, fail: failCallback };
+        callbackId = window.wadInterface.callbackId;
+        window.wadInterface.callbackId += 1;
+        window.wadInterface.callbacks[callbackId] = { success: successCallback, fail: failCallback };
       }
 
       actionArgs = actionArgs || {};
       if (window.wadInterface.platform() === 'ios') {
-        window.wadInterface.iosCommand(callbackID, action, actionArgs);
+        window.wadInterface.iosCommand(callbackId, action, actionArgs);
       } else if (window.wadInterface.platform() === 'aos') {
-        window.wadInterface.aosCommand(callbackID, action, actionArgs);
+        window.wadInterface.aosCommand(callbackId, action, actionArgs);
       }
     },
 
@@ -185,13 +185,13 @@
      * @private
      *
      * iOS WKWebView에 스크립트 메시지를 전송하여 명령을 전송한다.
-     * @param {number} callbackID - 콜백을 추적하기 위한 아이디
+     * @param {number} callbackId - 콜백을 추적하기 위한 아이디
      * @param {string} action - 어떤 액션인지 구분하는 값
      * @param {Object} actionArgs - 액션의 인자
      */
-    iosCommand: function(callbackID, action, actionArgs) {
-      var callbackIDString = (callbackID && callbackID.toString()) || null;
-      var message = { callbackID: callbackIDString, action: action, actionArgs: actionArgs };
+    iosCommand: function(callbackId, action, actionArgs) {
+      var callbackIdString = (callbackId && callbackId.toString()) || null;
+      var message = { callbackId: callbackIdString, action: action, actionArgs: actionArgs };
       window.webkit.messageHandlers.wadInterface.postMessage(message);
     },
 
@@ -199,14 +199,14 @@
      * @private
      *
      * AOS WebView에 Javascript Interface를 실행하여 명령을 전송한다.
-     * @param {number} callbackID - 콜백을 추적하기 위한 아이디
+     * @param {number} callbackId - 콜백을 추적하기 위한 아이디
      * @param {string} action - 어떤 액션인지 구분하는 값
      * @param {Object} actionArgs - 액션의 인자
      */
-    aosCommand: function(callbackID, action, actionArgs) {
+    aosCommand: function(callbackId, action, actionArgs) {
       var actionArgsStringfy = JSON.stringify(actionArgs);
-      var callbackIDString = callbackID.toString();
-      window.AndroidWadInterface.postAction(callbackIDString, action, actionArgsStringfy);
+      var callbackIdString = callbackId.toString();
+      window.AndroidWadInterface.postAction(callbackIdString, action, actionArgsStringfy);
     },
   };
 

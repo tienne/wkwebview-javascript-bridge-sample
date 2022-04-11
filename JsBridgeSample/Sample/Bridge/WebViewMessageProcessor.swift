@@ -23,7 +23,7 @@ class WebViewMessageProcessor: NSObject {
 
     func postMessage(message: WebViewMessage) {
         let completion: (WebViewCallback) -> Void = { callback in
-          self.executeCallback(callbackID: message.callbackID, callback: callback)
+          self.executeCallback(callbackId: message.callbackId, callback: callback)
         }
         guard let action = message.webviewAction else {
           return
@@ -65,11 +65,11 @@ class WebViewMessageProcessor: NSObject {
     }
 
     // MARK: - 웹뷰 -> 네이티브 -> 웹뷰 처리하는 콜백 실행
-    func executeCallback(callbackID: String?, callback: WebViewCallback) {
-      guard let callbackID = callbackID else { return }
+    func executeCallback(callbackId: String?, callback: WebViewCallback) {
+      print(callbackId)
+      guard let callbackId = callbackId else { return }
       let argsString = callback.args.rawString(options: []) ?? ""
-      let callbackFunction = "wadInterface.fromNative(\(callbackID), \(callback.isSuccessful), \(argsString));"
-
+      let callbackFunction = "wadInterface.fromNative(\(callbackId), \(callback.isSuccessful), \(argsString));"
       self.target.executeJavaScript(javascriptString: callbackFunction)
     }
 }

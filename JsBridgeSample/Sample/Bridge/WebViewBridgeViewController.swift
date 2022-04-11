@@ -77,9 +77,13 @@ private extension WebViewBridgeViewController {
     }
 
     func loadURL() {
-        guard let  url = Bundle.main.url(forResource: "sampleBridge", withExtension: "html") else {
+        guard let url = URL(string: "http://localhost:4200") else {
             return
+            
         }
+//        guard let  url = Bundle.main.url(forResource: "sampleBridge", withExtension: "html") else {
+//            return
+//        }F
         let request = URLRequest(url: url)
         self.webView.load(request)
     }
